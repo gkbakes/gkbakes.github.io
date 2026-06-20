@@ -1,0 +1,35 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-bakery-cream text-bakery-brown font-sans;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-serif text-bakery-brown;
+  }
+}
+
+@layer components {
+  /* Applied to rendered Astro Content components so markdown paragraphs have spacing */
+  .rendered-content p {
+    @apply mb-4 leading-relaxed;
+  }
+  .rendered-content p:last-child {
+    @apply mb-0;
+  }
+
+  /* Cart button clears iOS Safari toolbar and Android Chrome nav bar */
+  #cart-toggle {
+    bottom: max(1.5rem, calc(env(safe-area-inset-bottom, 0px) + 1rem));
+    right:  max(1.5rem, calc(env(safe-area-inset-right,  0px) + 1rem));
+  }
+}

@@ -1,0 +1,96 @@
+---
+const links = [
+  { label: 'Home',     href: '#home' },
+  { label: 'Menu',     href: '#menu' },
+  { label: 'Specials', href: '#specials' },
+  { label: 'About',    href: '#about' },
+  { label: 'Contact',  href: '#contact' },
+];
+---
+
+<header class="sticky top-0 z-50 bg-bakery-cream/95 backdrop-blur-sm border-b border-bakery-linen shadow-sm">
+  <nav class="max-w-6xl mx-auto px-6 py-3 flex items-center justify-between">
+    <a href="#home" class="flex items-center gap-3">
+      <img
+        src="/images/logo.jpeg"
+        alt="GK Bakes Logo"
+        class="h-11 w-11 object-cover rounded-full ring-2 ring-bakery-linen"
+      />
+      <span class="font-serif text-xl font-semibold text-bakery-brown">GK Bakes</span>
+    </a>
+
+    <ul class="hidden md:flex items-center gap-7">
+      {links.map(link => (
+        <li>
+          <a
+            href={link.href}
+            class="font-sans text-sm font-medium text-bakery-brown hover:text-bakery-green transition-colors duration-200"
+          >
+            {link.label}
+          </a>
+        </li>
+      ))}
+      <li>
+        <a
+          href="/images/Menu.jpeg"
+          download="GK-Bakes-Menu.pdf"
+          class="bg-bakery-green text-bakery-cream px-5 py-2 rounded-full text-sm font-medium transition-colors duration-300 hover:bg-bakery-amber"
+        >
+          Download Menu
+        </a>
+      </li>
+    </ul>
+
+    <button id="mobile-menu-btn" class="md:hidden text-bakery-brown p-1" aria-label="Toggle menu" aria-expanded="false">
+      <!-- Hamburger -->
+      <svg id="icon-open" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+      </svg>
+      <!-- Close (X) -->
+      <svg id="icon-close" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </button>
+  </nav>
+
+  <!-- Mobile dropdown -->
+  <div id="mobile-menu" class="hidden md:hidden bg-bakery-cream border-t border-bakery-linen px-6 py-4 flex flex-col gap-4">
+    {links.map(link => (
+      <a
+        href={link.href}
+        class="mobile-nav-link font-sans text-sm font-medium text-bakery-brown hover:text-bakery-green transition-colors duration-200 py-1"
+      >
+        {link.label}
+      </a>
+    ))}
+    <a
+      href="/images/Menu.jpeg"
+      download="GK-Bakes-Menu.pdf"
+      class="mobile-nav-link inline-block bg-bakery-green text-bakery-cream text-center px-5 py-2 rounded-full text-sm font-medium transition-colors duration-300 hover:bg-bakery-amber mt-1"
+    >
+      Download Menu
+    </a>
+  </div>
+</header>
+
+<script>
+  const btn   = document.getElementById('mobile-menu-btn')!;
+  const menu  = document.getElementById('mobile-menu')!;
+  const open  = document.getElementById('icon-open')!;
+  const close = document.getElementById('icon-close')!;
+
+  function toggleMenu(force?: boolean) {
+    const isOpen = force ?? menu.classList.contains('hidden');
+    menu.classList.toggle('hidden', !isOpen);
+    open.classList.toggle('hidden', isOpen);
+    close.classList.toggle('hidden', !isOpen);
+    btn.setAttribute('aria-expanded', String(isOpen));
+  }
+
+  btn.addEventListener('click', () => toggleMenu());
+
+  // Close on any nav link click (single-page smooth scroll)
+  document.querySelectorAll('.mobile-nav-link').forEach(link => {
+    link.addEventListener('click', () => toggleMenu(false));
+  });
+</script>

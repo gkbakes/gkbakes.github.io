@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600">
+  <rect width="800" height="600" fill="#F6EFE5"/>
+  <rect x="1" y="1" width="798" height="598" fill="none" stroke="#C17B3F" stroke-width="2" stroke-dasharray="8,4"/>
+  <text x="400" y="290" font-family="Georgia,serif" font-size="28" fill="#375623" text-anchor="middle" dominant-baseline="middle">📷</text>
+  <text x="400" y="330" font-family="Georgia,serif" font-size="20" fill="#23150D" text-anchor="middle">About — Lifestyle Photo</text>
+  <text x="400" y="360" font-family="sans-serif" font-size="13" fill="#C17B3F" text-anchor="middle">Replace with real photo</text>
+</svg>

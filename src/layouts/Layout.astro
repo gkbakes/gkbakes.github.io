@@ -1,0 +1,22 @@
+---
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+}
+
+const { title = 'GK Bakes — Handcrafted with Love' } = Astro.props;
+---
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="description" content="GK Bakes — artisan bakery handcrafting fresh bread, pastries, and custom cakes daily." />
+    <title>{title}</title>
+    <link rel="icon" href="/images/logo.jpeg" />
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>

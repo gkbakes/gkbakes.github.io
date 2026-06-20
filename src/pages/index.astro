@@ -1,0 +1,209 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Navbar from '../components/Navbar.astro';
+import MenuCard from '../components/MenuCard.astro';
+import Basket from '../components/Basket.astro';
+import { getCollection } from 'astro:content';
+
+const menuItems   = await getCollection('menu');
+const [aboutEntry]   = await getCollection('info');
+const [specialEntry] = await getCollection('specials');
+
+const { Content: AboutContent }   = await aboutEntry.render();
+
+const about   = aboutEntry.data;
+const special = specialEntry.data;
+---
+
+<Layout>
+  <Navbar />
+
+  <!-- ─── HERO ──────────────────────────────────────────────── -->
+  <section id="home" class="min-h-screen flex flex-col items-center justify-center text-center px-6 py-24 bg-bakery-cream">
+    <img
+      src="/images/logo.jpeg"
+      alt="GK Bakes"
+      class="w-44 h-44 object-cover rounded-full mb-10 shadow-xl ring-4 ring-bakery-linen"
+    />
+    <h1 class="font-serif text-5xl md:text-7xl font-bold text-bakery-brown mb-4 leading-tight max-w-2xl">
+      Baked Fresh.<br />Served with Love.
+    </h1>
+    <p class="font-serif italic text-bakery-ochre text-xl md:text-2xl mb-10 max-w-xl">
+      {about.tagline}
+    </p>
+    <a
+      href="#menu"
+      class="inline-block bg-bakery-green text-bakery-cream px-9 py-4 rounded-full font-medium text-base transition-colors duration-300 hover:bg-bakery-amber"
+    >
+      Explore Our Menu
+    </a>
+  </section>
+
+  <!-- ─── MENU ──────────────────────────────────────────────── -->
+  <section id="menu" class="py-20 px-6 bg-bakery-linen">
+    <div class="max-w-6xl mx-auto">
+      <div class="text-center mb-14">
+        <p class="font-serif italic text-bakery-ochre text-lg mb-2">Fresh daily</p>
+        <h2 class="font-serif text-4xl md:text-5xl font-bold text-bakery-brown mb-4">Our Menu</h2>
+        <div class="w-16 h-px bg-bakery-ochre mx-auto"></div>
+      </div>
+
+      <!-- Individual item cards -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {menuItems.map(item => (
+          <MenuCard
+            title={item.data.title}
+            category={item.data.category}
+            price={item.data.price}
+            description={item.data.description}
+            image={item.data.image}
+            featured={item.data.featured}
+          />
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── SPECIALS ──────────────────────────────────────────── -->
+  <section id="specials" class="py-20 px-6 bg-bakery-cream">
+    <div class="max-w-5xl mx-auto">
+      <div class="text-center mb-14">
+        <p class="font-serif italic text-bakery-ochre text-lg mb-2">Limited Time</p>
+        <h2 class="font-serif text-4xl md:text-5xl font-bold text-bakery-brown mb-4">
+          {special.title}
+        </h2>
+        <div class="w-16 h-px bg-bakery-ochre mx-auto mb-4"></div>
+        <p class="text-bakery-brown/65 text-base max-w-xl mx-auto">{special.subtitle}</p>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-12 items-center">
+        <div class="rounded-3xl overflow-hidden shadow-xl">
+          <img
+            src={special.image}
+            alt={special.title}
+            class="w-full h-full object-cover"
+          />
+        </div>
+        <div class="space-y-6">
+          <p class="text-bakery-brown/80 text-lg leading-relaxed">{special.description}</p>
+          {special.validUntil && (
+            <span class="inline-block text-sm font-medium text-bakery-green bg-bakery-linen px-4 py-2 rounded-full">
+              Available until {special.validUntil}
+            </span>
+          )}
+          <div class="flex items-center gap-5 pt-2">
+            <span class="font-serif text-3xl text-bakery-ochre font-bold">{special.price}</span>
+            <a
+              href="#contact"
+              class="bg-bakery-green text-bakery-cream px-6 py-3 rounded-full font-medium text-sm transition-colors duration-300 hover:bg-bakery-amber"
+            >
+              Order This Special
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── ABOUT ─────────────────────────────────────────────── -->
+  <section id="about" class="py-20 px-6 bg-bakery-linen">
+    <div class="max-w-6xl mx-auto grid md:grid-cols-2 gap-14 items-center">
+      <div>
+        <p class="font-serif italic text-bakery-ochre text-lg mb-2">Who we are</p>
+        <h2 class="font-serif text-4xl md:text-5xl font-bold text-bakery-brown mb-6">
+          {about.title}
+        </h2>
+        <div class="w-12 h-px bg-bakery-ochre mb-8"></div>
+        <div class="rendered-content text-bakery-brown/80 text-base">
+          <AboutContent />
+        </div>
+      </div>
+      <div class="rounded-3xl overflow-hidden shadow-xl">
+        <img
+          src="/images/about-baking.jpg"
+          alt="Inside GK Bakes"
+          class="w-full h-full object-cover"
+        />
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── CONTACT / FOOTER ──────────────────────────────────── -->
+  <footer id="contact" class="bg-bakery-brown text-bakery-cream py-20 px-6">
+    <div class="max-w-4xl mx-auto">
+
+      <!-- Leaf ♥ Heart motif (top) -->
+      <div class="flex items-center justify-center gap-4 mb-12">
+        <svg width="90" height="30" viewBox="0 0 90 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M0,15 Q22,3 45,15 Q67,27 90,15" stroke="#375623" stroke-width="1.8" fill="none"/>
+          <ellipse cx="15"  cy="8"  rx="10" ry="4.5" fill="#375623" transform="rotate(-28 15 8)"  opacity="0.85"/>
+          <ellipse cx="48"  cy="20" rx="10" ry="4.5" fill="#375623" transform="rotate(-22 48 20)" opacity="0.85"/>
+          <ellipse cx="76"  cy="10" rx="8"  ry="3.5" fill="#375623" transform="rotate(-30 76 10)" opacity="0.75"/>
+        </svg>
+        <svg width="30" height="28" viewBox="0 0 30 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M15,25 C15,25 2,16 2,8.5 C2,5 4.5,2.5 8,2.5 C10.8,2.5 13,4.2 15,6.5 C17,4.2 19.2,2.5 22,2.5 C25.5,2.5 28,5 28,8.5 C28,16 15,25 15,25Z" fill="#C17B3F"/>
+        </svg>
+        <svg width="90" height="30" viewBox="0 0 90 30" fill="none" xmlns="http://www.w3.org/2000/svg" style="transform:scaleX(-1)">
+          <path d="M0,15 Q22,3 45,15 Q67,27 90,15" stroke="#375623" stroke-width="1.8" fill="none"/>
+          <ellipse cx="15"  cy="8"  rx="10" ry="4.5" fill="#375623" transform="rotate(-28 15 8)"  opacity="0.85"/>
+          <ellipse cx="48"  cy="20" rx="10" ry="4.5" fill="#375623" transform="rotate(-22 48 20)" opacity="0.85"/>
+          <ellipse cx="76"  cy="10" rx="8"  ry="3.5" fill="#375623" transform="rotate(-30 76 10)" opacity="0.75"/>
+        </svg>
+      </div>
+
+      <!-- Logo & tagline -->
+      <div class="text-center mb-14">
+        <img
+          src="/images/logo.jpeg"
+          alt="GK Bakes"
+          class="w-20 h-20 object-cover rounded-full mx-auto mb-5 ring-2 ring-bakery-ochre"
+        />
+        <h2 class="font-serif text-3xl font-bold mb-2">GK Bakes</h2>
+        <p class="font-serif italic text-bakery-cream/60 text-base">{about.tagline}</p>
+      </div>
+
+      <!-- Info columns -->
+      <div class="grid md:grid-cols-3 gap-10 mb-14 text-center">
+        <div>
+          <h3 class="font-serif text-bakery-ochre font-semibold text-lg mb-3">Visit Us</h3>
+          <p class="text-bakery-cream/75 text-sm leading-relaxed">{about.address}</p>
+        </div>
+        <div>
+          <h3 class="font-serif text-bakery-ochre font-semibold text-lg mb-3">Hours</h3>
+          <p class="text-bakery-cream/75 text-sm leading-relaxed whitespace-pre-line">
+            {about.hours.replace(' | ', '\n')}
+          </p>
+        </div>
+        <div>
+          <h3 class="font-serif text-bakery-ochre font-semibold text-lg mb-3">Call Us</h3>
+          <a
+            href={`tel:${about.phone.replace(/[^\d+]/g, '')}`}
+            class="text-bakery-cream/75 text-sm hover:text-bakery-amber transition-colors duration-200"
+          >
+            {about.phone}
+          </a>
+        </div>
+      </div>
+
+      <!-- Bottom leaf motif & copyright -->
+      <div class="border-t border-bakery-cream/10 pt-8 flex items-center justify-center gap-5">
+        <svg width="56" height="18" viewBox="0 0 56 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M0,9 Q14,2 28,9 Q42,16 56,9" stroke="#375623" stroke-width="1.2" fill="none" opacity="0.55"/>
+          <ellipse cx="10" cy="5"  rx="6" ry="2.5" fill="#375623" transform="rotate(-22 10 5)"  opacity="0.5"/>
+          <ellipse cx="46" cy="13" rx="6" ry="2.5" fill="#375623" transform="rotate(-22 46 13)" opacity="0.5"/>
+        </svg>
+        <p class="text-bakery-cream/40 text-xs">
+          &copy; {new Date().getFullYear()} GK Bakes. Made with love.
+        </p>
+        <svg width="56" height="18" viewBox="0 0 56 18" fill="none" xmlns="http://www.w3.org/2000/svg" style="transform:scaleX(-1)">
+          <path d="M0,9 Q14,2 28,9 Q42,16 56,9" stroke="#375623" stroke-width="1.2" fill="none" opacity="0.55"/>
+          <ellipse cx="10" cy="5"  rx="6" ry="2.5" fill="#375623" transform="rotate(-22 10 5)"  opacity="0.5"/>
+          <ellipse cx="46" cy="13" rx="6" ry="2.5" fill="#375623" transform="rotate(-22 46 13)" opacity="0.5"/>
+        </svg>
+      </div>
+
+    </div>
+  </footer>
+
+  <Basket />
+</Layout>

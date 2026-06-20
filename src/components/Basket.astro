@@ -1,0 +1,344 @@
+---
+// Key injected at build time; bundled into the client script.
+import { WEB3FORMS_KEY } from '../config';
+---
+
+<!-- ── Floating cart button ──────────────────────────────────────── -->
+<button
+  id="cart-toggle"
+  class="fixed bottom-6 right-6 z-50 bg-bakery-green text-bakery-cream w-14 h-14 rounded-full shadow-xl flex items-center justify-center transition-colors duration-300 hover:bg-bakery-amber"
+  aria-label="Open order basket"
+>
+  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+    <path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+  </svg>
+  <span id="cart-count" class="absolute -top-1 -right-1 bg-bakery-ochre text-bakery-cream text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center hidden">0</span>
+</button>
+
+<!-- ── Backdrop ──────────────────────────────────────────────────── -->
+<div id="cart-overlay" class="fixed inset-0 z-40 bg-bakery-brown/40 backdrop-blur-sm hidden"></div>
+
+<!-- ── Slide-out drawer ──────────────────────────────────────────── -->
+<aside
+  id="cart-drawer"
+  class="fixed top-0 right-0 z-50 h-full w-full max-w-sm bg-bakery-cream shadow-2xl translate-x-full transition-transform duration-300 ease-in-out flex flex-col"
+  aria-label="Order basket"
+>
+  <!-- Header -->
+  <div class="flex items-center justify-between px-5 py-4 border-b border-bakery-linen shrink-0">
+    <div>
+      <h2 class="font-serif text-bakery-brown text-xl font-semibold">Your Order</h2>
+      <p id="cart-count-badge" class="text-bakery-ochre text-xs font-medium mt-0.5">0 items</p>
+    </div>
+    <button
+      id="cart-close"
+      class="w-8 h-8 rounded-full bg-bakery-linen text-bakery-brown flex items-center justify-center hover:bg-bakery-brown/10 transition-colors"
+      aria-label="Close basket"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </button>
+  </div>
+
+  <!-- Scrollable body -->
+  <div class="flex-1 overflow-y-auto">
+
+    <!-- Empty state -->
+    <div id="cart-empty" class="flex flex-col items-center justify-center p-10 text-center">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-bakery-brown/20 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+      </svg>
+      <p class="font-serif text-bakery-brown/50">Your basket is empty</p>
+      <p class="text-bakery-brown/35 text-sm mt-1">Add items from the menu</p>
+    </div>
+
+    <!-- Item list (hidden when empty) -->
+    <div id="cart-items" class="p-4 space-y-3 hidden"></div>
+
+    <!-- Total row -->
+    <div id="cart-total-row" class="hidden px-5 py-4 border-t border-bakery-linen flex justify-between items-center">
+      <span class="font-serif text-bakery-brown font-semibold">Order Total</span>
+      <span id="cart-total-amount" class="font-serif text-bakery-ochre font-bold text-xl">Rs.0/-</span>
+    </div>
+
+    <!-- Section break -->
+    <div class="h-2 bg-bakery-linen/60"></div>
+
+    <!-- Order form -->
+    <form id="order-form" class="p-5 space-y-4" novalidate>
+      <h3 class="font-serif text-bakery-brown font-semibold text-lg">Your Details</h3>
+
+      <div>
+        <label class="block text-xs font-medium text-bakery-brown/70 mb-1" for="field-name">Name *</label>
+        <input id="field-name" name="name" type="text" required placeholder="Priya Sharma"
+          class="w-full border border-bakery-linen rounded-xl px-4 py-2.5 text-sm text-bakery-brown bg-white focus:outline-none focus:ring-2 focus:ring-bakery-green/30 focus:border-bakery-green transition-colors" />
+      </div>
+
+      <div>
+        <label class="block text-xs font-medium text-bakery-brown/70 mb-1" for="field-email">Email *</label>
+        <input id="field-email" name="email" type="email" required placeholder="priya@example.com"
+          class="w-full border border-bakery-linen rounded-xl px-4 py-2.5 text-sm text-bakery-brown bg-white focus:outline-none focus:ring-2 focus:ring-bakery-green/30 focus:border-bakery-green transition-colors" />
+      </div>
+
+      <div>
+        <label class="block text-xs font-medium text-bakery-brown/70 mb-1" for="field-phone">Phone *</label>
+        <input id="field-phone" name="phone" type="tel" required placeholder="+91 98765 43210"
+          class="w-full border border-bakery-linen rounded-xl px-4 py-2.5 text-sm text-bakery-brown bg-white focus:outline-none focus:ring-2 focus:ring-bakery-green/30 focus:border-bakery-green transition-colors" />
+      </div>
+
+      <div>
+        <label class="block text-xs font-medium text-bakery-brown/70 mb-1" for="field-pickup">Preferred Pickup *</label>
+        <input id="field-pickup" name="pickup_time" type="datetime-local" required
+          class="w-full border border-bakery-linen rounded-xl px-4 py-2.5 text-sm text-bakery-brown bg-white focus:outline-none focus:ring-2 focus:ring-bakery-green/30 focus:border-bakery-green transition-colors" />
+      </div>
+
+      <div>
+        <label class="block text-xs font-medium text-bakery-brown/70 mb-1" for="field-notes">Special Notes</label>
+        <textarea id="field-notes" name="notes" rows="3" placeholder="Allergies, customisations…"
+          class="w-full border border-bakery-linen rounded-xl px-4 py-2.5 text-sm text-bakery-brown bg-white focus:outline-none focus:ring-2 focus:ring-bakery-green/30 focus:border-bakery-green transition-colors resize-none"></textarea>
+      </div>
+
+      <!-- Hidden Web3Forms fields (values set by JS before submit) -->
+      <input type="hidden" name="access_key"     id="field-access-key" />
+      <input type="hidden" name="subject"        id="field-subject" />
+      <input type="hidden" name="from_name"      value="GK Bakes Automated Order System" />
+      <input type="hidden" name="order_summary"  id="field-order-summary" />
+
+      <!-- Feedback banners -->
+      <div id="form-success" class="hidden rounded-xl bg-green-50 border border-green-200 p-4 text-green-800 text-sm space-y-1">
+        <p class="font-semibold">Order received!</p>
+        <p>Thank you — we'll confirm your pickup shortly.</p>
+      </div>
+      <div id="form-error" class="hidden rounded-xl bg-red-50 border border-red-200 p-4 text-red-800 text-sm">
+        <p id="form-error-msg">Something went wrong. Please try again or call us directly.</p>
+      </div>
+
+      <!-- Submit -->
+      <button
+        type="submit"
+        id="submit-btn"
+        class="w-full bg-bakery-green text-bakery-cream py-3 rounded-full font-medium text-sm transition-colors duration-300 hover:bg-bakery-amber disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+      >
+        Place Order
+      </button>
+    </form>
+
+  </div>
+</aside>
+
+<script define:vars={{ WEB3FORMS_KEY }}>
+  // ── Types ────────────────────────────────────────────────────────
+  /** @typedef {{ title: string; price: string; priceNum: number; qty: number }} CartItem */
+
+  const STORAGE_KEY = 'gk-bakes-cart';
+  const WEB3_URL    = 'https://api.web3forms.com/submit';
+
+  // ── Persistence ──────────────────────────────────────────────────
+  function getCart() {
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEY) ?? '[]'); }
+    catch { return []; }
+  }
+  function saveCart(cart) { localStorage.setItem(STORAGE_KEY, JSON.stringify(cart)); }
+
+  function parsePrice(price) {
+    const m = price.match(/\d+/);
+    return m ? parseInt(m[0], 10) : 0;
+  }
+  function getTotal(cart) {
+    return cart.reduce((s, i) => s + i.priceNum * i.qty, 0);
+  }
+
+  // ── Mutations ────────────────────────────────────────────────────
+  function addItem(title, price) {
+    const cart = getCart();
+    const existing = cart.find(i => i.title === title);
+    if (existing) { existing.qty++; }
+    else { cart.push({ title, price, priceNum: parsePrice(price), qty: 1 }); }
+    saveCart(cart);
+    renderCart();
+    openDrawer();
+  }
+
+  function updateQty(title, delta) {
+    let cart = getCart();
+    const item = cart.find(i => i.title === title);
+    if (!item) return;
+    item.qty = Math.max(0, item.qty + delta);
+    if (item.qty === 0) cart = cart.filter(i => i.title !== title);
+    saveCart(cart);
+    renderCart();
+  }
+
+  // ── Serialization ─────────────────────────────────────────────────
+  function serializeCart(cart) {
+    const lines = cart.map(item => {
+      const lineTotal = item.priceNum * item.qty;
+      return `- ${item.qty}x ${item.title} (${item.price} each) -> Rs.${lineTotal}/-`;
+    });
+    return [
+      '========================================',
+      'ORDER SUMMARY RECEIPT',
+      '========================================',
+      ...lines,
+      '----------------------------------------',
+      `TOTAL ORDER AMOUNT: Rs.${getTotal(cart)}/-`,
+      '========================================',
+    ].join('\n');
+  }
+
+  // ── Render ───────────────────────────────────────────────────────
+  function escHtml(s) {
+    return s.replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  function renderCart() {
+    const cart          = getCart();
+    const elItems       = document.getElementById('cart-items');
+    const elEmpty       = document.getElementById('cart-empty');
+    const elTotalRow    = document.getElementById('cart-total-row');
+    const elTotalAmt    = document.getElementById('cart-total-amount');
+    const elBadge       = document.getElementById('cart-count-badge');
+    const elFloatCount  = document.getElementById('cart-count');
+
+    const totalQty = cart.reduce((s, i) => s + i.qty, 0);
+    elBadge.textContent      = `${totalQty} item${totalQty !== 1 ? 's' : ''}`;
+    elFloatCount.textContent = String(totalQty);
+    elFloatCount.classList.toggle('hidden', totalQty === 0);
+
+    if (cart.length === 0) {
+      elEmpty.classList.remove('hidden');
+      elItems.classList.add('hidden');
+      elTotalRow.classList.add('hidden');
+      elItems.innerHTML = '';
+      return;
+    }
+
+    elEmpty.classList.add('hidden');
+    elItems.classList.remove('hidden');
+    elTotalRow.classList.remove('hidden');
+
+    elItems.innerHTML = cart.map(item => `
+      <div class="flex items-center gap-3 bg-bakery-linen rounded-xl px-4 py-3">
+        <div class="flex-1 min-w-0">
+          <p class="font-medium text-sm text-bakery-brown leading-tight truncate">${escHtml(item.title)}</p>
+          <p class="text-bakery-ochre text-xs mt-0.5">${escHtml(item.price)}</p>
+        </div>
+        <div class="flex items-center gap-2 shrink-0">
+          <button class="qty-btn w-7 h-7 rounded-full bg-bakery-cream text-bakery-brown font-bold text-base flex items-center justify-center hover:bg-bakery-brown/10 transition-colors"
+            data-title="${escHtml(item.title)}" data-delta="-1">−</button>
+          <span class="text-bakery-brown font-semibold text-sm w-5 text-center">${item.qty}</span>
+          <button class="qty-btn w-7 h-7 rounded-full bg-bakery-cream text-bakery-brown font-bold text-base flex items-center justify-center hover:bg-bakery-brown/10 transition-colors"
+            data-title="${escHtml(item.title)}" data-delta="1">+</button>
+        </div>
+      </div>
+    `).join('');
+
+    elItems.querySelectorAll('.qty-btn').forEach(btn => {
+      btn.addEventListener('click', () =>
+        updateQty(btn.dataset.title, parseInt(btn.dataset.delta, 10))
+      );
+    });
+
+    elTotalAmt.textContent = `Rs.${getTotal(cart)}/-`;
+  }
+
+  // ── Drawer ───────────────────────────────────────────────────────
+  function openDrawer() {
+    document.getElementById('cart-drawer').classList.remove('translate-x-full');
+    document.getElementById('cart-overlay').classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeDrawer() {
+    document.getElementById('cart-drawer').classList.add('translate-x-full');
+    document.getElementById('cart-overlay').classList.add('hidden');
+    document.body.style.overflow = '';
+  }
+
+  // ── Form submission ───────────────────────────────────────────────
+  function showSuccess() {
+    document.getElementById('form-success').classList.remove('hidden');
+    document.getElementById('form-error').classList.add('hidden');
+  }
+  function showError(msg) {
+    document.getElementById('form-error-msg').textContent = msg;
+    document.getElementById('form-error').classList.remove('hidden');
+    document.getElementById('form-success').classList.add('hidden');
+  }
+  function hideAlerts() {
+    document.getElementById('form-success').classList.add('hidden');
+    document.getElementById('form-error').classList.add('hidden');
+  }
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+    const cart = getCart();
+    if (cart.length === 0) {
+      showError('Please add at least one item before placing an order.');
+      return;
+    }
+
+    const form      = document.getElementById('order-form');
+    const submitBtn = document.getElementById('submit-btn');
+    const nameVal   = form.querySelector('[name="name"]').value.trim();
+
+    // Populate hidden fields right before send
+    document.getElementById('field-access-key').value    = WEB3FORMS_KEY;
+    document.getElementById('field-subject').value       = `[GK Bakes Order] New Request from ${nameVal}`;
+    document.getElementById('field-order-summary').value = serializeCart(cart);
+
+    // Loading state
+    submitBtn.disabled    = true;
+    submitBtn.textContent = 'Sending…';
+    hideAlerts();
+
+    try {
+      // Serialize all form fields (including hidden ones) into a plain object
+      const payload = {};
+      new FormData(form).forEach((val, key) => { payload[key] = val; });
+
+      const res  = await fetch(WEB3_URL, {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body:    JSON.stringify(payload),
+      });
+      const json = await res.json();
+
+      if (json.success) {
+        showSuccess();
+        saveCart([]);
+        renderCart();
+        form.reset();
+      } else {
+        showError(json.message ?? 'Submission failed. Please try again.');
+      }
+    } catch {
+      showError('Network error. Please check your connection and try again, or call us directly.');
+    } finally {
+      submitBtn.disabled    = false;
+      submitBtn.textContent = 'Place Order';
+    }
+  }
+
+  // ── Init ─────────────────────────────────────────────────────────
+  // Module scripts are deferred — DOM is fully built when this runs.
+  document.getElementById('cart-toggle').addEventListener('click', openDrawer);
+  document.getElementById('cart-close').addEventListener('click', closeDrawer);
+  document.getElementById('cart-overlay').addEventListener('click', closeDrawer);
+  document.getElementById('order-form').addEventListener('submit', handleSubmit);
+
+  // Set minimum pickup time to 2 hours from now
+  const pickupInput = document.getElementById('field-pickup');
+  if (pickupInput) {
+    const soon = new Date(Date.now() + 2 * 60 * 60 * 1000);
+    pickupInput.min = soon.toISOString().slice(0, 16);
+  }
+
+  // Wire up all Add-to-Order buttons (static HTML, already in DOM)
+  document.querySelectorAll('.add-to-cart-btn').forEach(btn => {
+    btn.addEventListener('click', () => addItem(btn.dataset.title, btn.dataset.price));
+  });
+
+  // Rehydrate cart count from localStorage on page load
+  renderCart();
+</script>
